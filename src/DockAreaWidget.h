@@ -78,7 +78,7 @@ private Q_SLOTS:
 
 protected:
 
-#ifdef Q_OS_WIN
+//#ifdef Q_OS_WIN
 	/**
 	 * Reimplements QWidget::event to handle QEvent::PlatformSurface
 	 * This is here to fix issue #294 Tab refresh problem with a QGLWidget
@@ -86,7 +86,7 @@ protected:
 	 * work around a Qt issue.
 	 */
 	virtual bool event(QEvent *event) override;
-#endif
+//#endif
 
 	/**
 	 * Inserts a dock widget into dock area.

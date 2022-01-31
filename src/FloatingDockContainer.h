@@ -33,7 +33,7 @@
 
 #include <QRubberBand>
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(__ANDROID__)
 #include <QDockWidget>
 #define tFloatingWidgetBase QDockWidget
 #else
@@ -185,7 +185,7 @@ protected: // reimplements QWidget
 	virtual void moveEvent(QMoveEvent *event) override;
 #endif
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(__ANDROID__)
 	virtual void moveEvent(QMoveEvent *event) override;
 	virtual void resizeEvent(QResizeEvent *event) override;
 #endif
@@ -263,7 +263,7 @@ public:
 	 */
 	void hideAndDeleteLater();
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(__ANDROID__)
     /**
 	 * This is a function that responds to FloatingWidgetTitleBar::maximizeRequest()
 	 * Maximize or normalize the container size.

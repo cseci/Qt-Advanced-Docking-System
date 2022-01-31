@@ -488,7 +488,7 @@ public:
 		widget->setFocus(Qt::OtherFocusReason);
 	}
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(__ANDROID__)
 	bool eventFilter(QObject *obj, QEvent *e) override;
 #endif
 

@@ -184,6 +184,7 @@ public:
 		}
 		m_CurrentIndex = index;
 		m_CurrentWidget = next;
+//		next->update();
 
 
 		if (reenableUpdates)
@@ -1030,7 +1031,7 @@ void CDockAreaWidget::onDockWidgetFeaturesChanged()
 }
 
 
-#ifdef Q_OS_WIN
+//ifdef Q_OS_WIN
 //============================================================================
 bool CDockAreaWidget::event(QEvent *e)
 {
@@ -1043,7 +1044,7 @@ bool CDockAreaWidget::event(QEvent *e)
 
     return Super::event(e);
 }
-#endif
+//#endif
 
 } // namespace ads
 

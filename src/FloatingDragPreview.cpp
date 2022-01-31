@@ -234,7 +234,7 @@ CFloatingDragPreview::CFloatingDragPreview(QWidget* Content, QWidget* parent) :
 		setAttribute(Qt::WA_TranslucentBackground);
 	}
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(__ANDROID__)
     auto Flags = windowFlags();
     Flags |= Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint;
     setWindowFlags(Flags);

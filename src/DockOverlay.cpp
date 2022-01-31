@@ -139,7 +139,7 @@ struct DockOverlayCrossPrivate
      */
     qreal dropIndicatiorWidth(QLabel* l) const
     {
-    #ifdef Q_OS_LINUX
+    #if defined(Q_OS_LINUX) && !defined(__ANDROID__)
         Q_UNUSED(l)
         return 40;
     #else
@@ -333,7 +333,7 @@ CDockOverlay::CDockOverlay(QWidget* parent, eMode Mode) :
 {
 	d->Mode = Mode;
 	d->Cross = new CDockOverlayCross(this);
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(__ANDROID__)
 	setWindowFlags(Qt::Tool | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
 #else
 	setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);
@@ -594,7 +594,7 @@ CDockOverlayCross::CDockOverlayCross(CDockOverlay* overlay) :
 	d(new DockOverlayCrossPrivate(this))
 {
 	d->DockOverlay = overlay;
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(__ANDROID__)
 	setWindowFlags(Qt::Tool | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
 #else
 	setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);

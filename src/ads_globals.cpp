@@ -38,7 +38,7 @@
 #include "IconProvider.h"
 #include "ads_globals.h"
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(__ANDROID__)
 #include <QSettings>
 #include <QFile>
 #include <QApplication>
@@ -50,7 +50,7 @@ namespace ads
 
 namespace internal
 {
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(__ANDROID__)
 static QString _window_manager;
 static QHash<QString, xcb_atom_t> _xcb_atom_cache;
 
@@ -369,7 +369,7 @@ void setButtonIcon(QAbstractButton* Button, QStyle::StandardPixmap StandarPixmap
 		return;
 	}
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(__ANDROID__)
 	Button->setIcon(Button->style()->standardIcon(StandarPixmap));
 #else
 	// The standard icons does not look good on high DPI screens so we create

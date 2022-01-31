@@ -38,7 +38,7 @@
 #include <QStyle>
 #include <QMouseEvent>
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(__ANDROID__)
 #include <xcb/xcb.h>
 #endif
 
@@ -135,7 +135,7 @@ static const bool Restore = false;
 static const char* const ClosedProperty = "close";
 static const char* const DirtyProperty = "dirty";
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(__ANDROID__)
 // Utils to directly communicate with the X server
 /**
  * Get atom from cache or request it from the XServer.

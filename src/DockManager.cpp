@@ -57,7 +57,7 @@
 #include "DockFocusController.h"
 #include "DockSplitter.h"
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(__ANDROID__)
 #include "linux/FloatingWidgetTitleBar.h"
 #endif
 
@@ -187,7 +187,7 @@ void DockManagerPrivate::loadStylesheet()
 	QString FileName = ":ads/stylesheets/";
 	FileName += CDockManager::testConfigFlag(CDockManager::FocusHighlighting)
 		? "focus_highlighting" : "default";
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(__ANDROID__)
     FileName += "_linux";
 #endif
     FileName += ".css";
@@ -498,7 +498,7 @@ CDockManager::CDockManager(QWidget *parent) :
 		d->FocusController = new CDockFocusController(this);
 	}
 
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(__ANDROID__)
 	window()->installEventFilter(this);
 #endif
 }
@@ -529,7 +529,7 @@ CDockManager::~CDockManager()
 }
 
 //============================================================================
-#ifdef Q_OS_LINUX
+#if defined(Q_OS_LINUX) && !defined(__ANDROID__)
 bool CDockManager::eventFilter(QObject *obj, QEvent *e)
 {
 	// Emulate Qt:Tool behaviour.
