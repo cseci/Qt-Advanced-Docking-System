@@ -7,6 +7,10 @@ add_executable(SimpleExample WIN32
     main.cpp
     MainWindow.cpp
     MainWindow.ui
+    glwidget.cpp
+    form.ui
+    formwithgl.cpp
+    logo.cpp
 )
 target_include_directories(SimpleExample PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../../src")
 target_link_libraries(SimpleExample PRIVATE qtadvanceddocking)
