@@ -393,7 +393,7 @@ void CDockAreaTitleBar::updateDockWidgetActionsButtons()
 	CDockWidget* DockWidget = d->TabBar->currentTab()->dockWidget();
 	if (!d->DockWidgetActionsButtons.isEmpty())
 	{
-		for (auto Button : d->DockWidgetActionsButtons)
+		for (auto Button : qAsConst(d->DockWidgetActionsButtons))
 		{
 			d->Layout->removeWidget(Button);
 			delete Button;
@@ -408,7 +408,7 @@ void CDockAreaTitleBar::updateDockWidgetActionsButtons()
 	}
 
 	int InsertIndex = indexOf(d->TabsMenuButton);
-	for (auto Action : Actions)
+	for (auto Action : qAsConst(Actions))
 	{
 		auto Button = new CTitleBarButton(true, this);
 		Button->setDefaultAction(Action);

@@ -140,7 +140,7 @@ struct DockManagerPrivate
 	void hideFloatingWidgets()
 	{
 		// Hide updates of floating widgets from user
-		for (auto FloatingWidget : FloatingWidgets)
+		for (auto FloatingWidget : qAsConst(FloatingWidgets))
 		{
 			FloatingWidget->hide();
 		}
@@ -148,7 +148,7 @@ struct DockManagerPrivate
 
 	void markDockWidgetsDirty()
 	{
-		for (auto DockWidget : DockWidgetsMap)
+		for (auto DockWidget : qAsConst(DockWidgetsMap))
 		{
 			DockWidget->setProperty("dirty", true);
 		}
@@ -339,7 +339,7 @@ void DockManagerPrivate::restoreDockWidgetsOpenState()
     // function are invisible to the user now and have no assigned dock area
     // They do not belong to any dock container, until the user toggles the
     // toggle view action the next time
-    for (auto DockWidget : DockWidgetsMap)
+    for (auto DockWidget : qAsConst(DockWidgetsMap))
     {
     	if (DockWidget->property(internal::DirtyProperty).toBool())
     	{
@@ -361,7 +361,7 @@ void DockManagerPrivate::restoreDockAreasIndices()
     // The dock areas because the previous toggleView() action has changed
     // the dock area index
     int Count = 0;
-    for (auto DockContainer : Containers)
+    for (auto DockContainer : qAsConst(Containers))
     {
     	Count++;
     	for (int i = 0; i < DockContainer->dockAreaCount(); ++i)
@@ -396,7 +396,7 @@ void DockManagerPrivate::emitTopLevelEvents()
 {
     // Finally we need to send the topLevelChanged() signals for all dock
     // widgets if top level changed
-    for (auto DockContainer : Containers)
+    for (auto DockContainer : qAsConst(Containers))
     {
     	CDockWidget* TopLevelDockWidget = DockContainer->topLevelDockWidget();
     	if (TopLevelDockWidget)
@@ -408,7 +408,8 @@ void DockManagerPrivate::emitTopLevelEvents()
 			for (int i = 0; i < DockContainer->dockAreaCount(); ++i)
 			{
 				auto DockArea = DockContainer->dockArea(i);
-				for (auto DockWidget : DockArea->dockWidgets())
+				auto const dockWidgets = DockArea->dockWidgets();
+				for (auto DockWidget : dockWidgets)
 				{
 					DockWidget->emitTopLevelChanged(false);
 				}
@@ -514,7 +515,8 @@ CDockManager::~CDockManager()
     }
     for ( auto area : areas )
     {
-        for ( auto widget : area->dockWidgets() )
+		const auto dockWidgets = area->dockWidgets();
+		for ( auto widget : dockWidgets )
             delete widget;
 
         delete area;
@@ -677,7 +679,7 @@ QByteArray CDockManager::saveState(int version) const
 		{
 			s.writeAttribute("CentralWidget", d->CentralWidget->objectName());
 		}
-		for (auto Container : d->Containers)
+		for (auto Container : qAsConst(d->Containers))
 		{
 			Container->saveState(s);
 		}
@@ -764,7 +766,7 @@ void CDockManager::showEvent(QShowEvent *event)
 		return;
 	}
 
-	for (auto FloatingWidget : d->UninitializedFloatingWidgets)
+	for (auto FloatingWidget : qAsConst(d->UninitializedFloatingWidgets))
 	{
 		// Check, if someone closed a floating dock widget before the dock
 		// manager is shown
@@ -786,7 +788,7 @@ void CDockManager::restoreHiddenFloatingWidgets()
 	}
 
 	// Restore floating widgets that were hidden upon hideManagerAndFloatingWidgets
-	for (auto FloatingWidget : d->HiddenFloatingWidgets)
+	for (auto FloatingWidget : qAsConst(d->HiddenFloatingWidgets))
 	{
 		bool hasDockWidgetVisible = false;
 
@@ -794,7 +796,8 @@ void CDockManager::restoreHiddenFloatingWidgets()
 		// Could make sense to move this to CFloatingDockContainer::showEvent(QShowEvent *event)
 		// if experiencing CFloatingDockContainer being shown empty in other situations, but let's keep
 		// it here for now to make sure changes to fix Issue #380 does not impact existing behaviours
-		for (auto dockWidget : FloatingWidget->dockWidgets())
+		const auto dockWidgets = FloatingWidget->dockWidgets();
+		for (auto dockWidget : dockWidgets)
 		{
 			if (dockWidget->toggleViewAction()->isChecked())
 			{
@@ -894,7 +897,7 @@ void CDockManager::removePerspective(const QString& Name)
 void CDockManager::removePerspectives(const QStringList& Names)
 {
 	int Count = 0;
-	for (auto Name : Names)
+	for (const auto &Name : Names)
 	{
 		Count += d->Perspectives.remove(Name);
 	}
@@ -1148,12 +1151,13 @@ void CDockManager::hideManagerAndFloatingWidgets()
 
 	d->HiddenFloatingWidgets.clear();
 	// Hide updates of floating widgets from user
-	for (auto FloatingWidget : d->FloatingWidgets)
+	for (auto FloatingWidget : qAsConst(d->FloatingWidgets))
 	{
 		if ( FloatingWidget->isVisible() )
 		{
 			QList<CDockWidget*> VisibleWidgets;
-			for ( auto dockWidget : FloatingWidget->dockWidgets() )
+			const auto dockWidgets = FloatingWidget->dockWidgets();
+			for ( auto dockWidget : dockWidgets )
 			{
 				if ( dockWidget->toggleViewAction()->isChecked() )
 					VisibleWidgets.push_back( dockWidget );

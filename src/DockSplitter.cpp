@@ -105,7 +105,8 @@ QWidget* CDockSplitter::lastWidget() const
 //============================================================================
 bool CDockSplitter::isResizingWithContainer() const
 {
-    for (auto area : findChildren<CDockAreaWidget*>())
+	const auto dockAreaWidgetChildren = findChildren<CDockAreaWidget*>();
+	for (auto area : dockAreaWidgetChildren)
     {
         if(area->isCentralWidgetArea())
         {

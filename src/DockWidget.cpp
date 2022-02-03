@@ -143,6 +143,7 @@ DockWidgetPrivate::DockWidgetPrivate(CDockWidget* _public) :
 //============================================================================
 void DockWidgetPrivate::showDockWidget()
 {
+	qDebug()<<"showDockWidget";
 	if (!Widget)
 	{
 		if (!createWidgetFromFactory())
@@ -189,6 +190,7 @@ void DockWidgetPrivate::showDockWidget()
 //============================================================================
 void DockWidgetPrivate::hideDockWidget()
 {
+	qDebug()<<"hideDockWidget";
 	TabWidget->hide();
 	updateParentDockArea();
 	
@@ -645,6 +647,7 @@ void CDockWidget::flagAsUnassigned()
 //============================================================================
 bool CDockWidget::event(QEvent *e)
 {
+	qDebug()<<"CDockWidget event - "<< e;
 	switch (e->type())
 	{
 	case QEvent::Hide:

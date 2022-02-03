@@ -517,7 +517,7 @@ void FloatingDockContainerPrivate::updateDropOverlays(const QPoint &GlobalPos)
 
 	auto Containers = DockManager->dockContainers();
 	CDockContainerWidget *TopContainer = nullptr;
-	for (auto ContainerWidget : Containers)
+	for (auto ContainerWidget : qAsConst(Containers))
 	{
 		if (!ContainerWidget->isVisible())
 		{
@@ -845,9 +845,11 @@ void CFloatingDockContainer::hideEvent(QHideEvent *event)
 	if ( d->AutoHideChildren )
 	{
 		d->Hiding = true;
-		for ( auto DockArea : d->DockContainer->openedDockAreas() )
+		auto const openedDockAreas = d->DockContainer->openedDockAreas();
+		for ( auto DockArea : openedDockAreas )
 		{
-			for ( auto DockWidget : DockArea->openedDockWidgets() )
+			auto const openedDockWidgets = DockArea->openedDockWidgets();
+			for ( auto DockWidget : openedDockWidgets )
 			{
 				DockWidget->toggleView( false );
 			}

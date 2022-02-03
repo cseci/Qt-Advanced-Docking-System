@@ -85,7 +85,7 @@ void FloatingDragPreviewPrivate::updateDropOverlays(const QPoint &GlobalPos)
 
 	auto Containers = DockManager->dockContainers();
 	CDockContainerWidget *TopContainer = nullptr;
-	for (auto ContainerWidget : Containers)
+	for (auto ContainerWidget : qAsConst(Containers))
 	{
 		if (!ContainerWidget->isVisible())
 		{
@@ -231,7 +231,13 @@ CFloatingDragPreview::CFloatingDragPreview(QWidget* Content, QWidget* parent) :
 	{
 		setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);
 		setAttribute(Qt::WA_NoSystemBackground);
+#ifdef ADS_TRANSPARENT_OVERLAY
 		setAttribute(Qt::WA_TranslucentBackground);
+#else
+		QPalette p;
+		p.setColor(QPalette::Background, QColor(0,0,0,0));
+		setPalette(p);
+#endif
 	}
 
 #if defined(Q_OS_LINUX) && !defined(__ANDROID__)

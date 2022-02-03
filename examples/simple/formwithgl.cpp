@@ -13,6 +13,12 @@ formWithGL::formWithGL(QWidget *parent) : QWidget(parent)
 //	connect(ui->pushButton,SIGNAL(clicked()),this,SLOT(loseParent()));
 }
 
+formWithGL::~formWithGL()
+{
+	delete gl;
+
+}
+
 void formWithGL::paintEvent(QPaintEvent *pv) {	
 	QWidget::paintEvent(pv);
 }

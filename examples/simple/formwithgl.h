@@ -13,6 +13,7 @@ class formWithGL : public QWidget
 public:
 	Ui::Form *ui;
 	formWithGL(QWidget *parent = nullptr);
+	~formWithGL();
 	void paintEvent(QPaintEvent *pv) override;
 //	void loseParent();
 private:

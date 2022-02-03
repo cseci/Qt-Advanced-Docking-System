@@ -866,7 +866,8 @@ CDockWidget::DockWidgetFeatures CDockAreaWidget::features(eBitwiseOperator Mode)
 	if (BitwiseAnd == Mode)
 	{
 		CDockWidget::DockWidgetFeatures Features(CDockWidget::AllDockWidgetFeatures);
-		for (const auto DockWidget : dockWidgets())
+		const auto dockWidgetsHelper = dockWidgets();
+		for (const auto DockWidget : dockWidgetsHelper)
 		{
 			Features &= DockWidget->features();
 		}
@@ -875,7 +876,8 @@ CDockWidget::DockWidgetFeatures CDockAreaWidget::features(eBitwiseOperator Mode)
 	else
 	{
 		CDockWidget::DockWidgetFeatures Features(CDockWidget::NoDockWidgetFeatures);
-		for (const auto DockWidget : dockWidgets())
+		const auto dockWidgetsHelper = dockWidgets();
+		for (const auto DockWidget : dockWidgetsHelper)
 		{
 			Features |= DockWidget->features();
 		}
@@ -965,7 +967,8 @@ void CDockAreaWidget::closeArea()
 	}
     else
 	{
-        for (auto DockWidget : openedDockWidgets())
+		const auto openedDockWidgetsHelper = openedDockWidgets();
+		for (auto DockWidget : openedDockWidgetsHelper)
         {
             if (DockWidget->features().testFlag(CDockWidget::DockWidgetDeleteOnClose) && DockWidget->features().testFlag(CDockWidget::DockWidgetForceCloseWithArea))
                 DockWidget->closeDockWidgetInternal();
@@ -1035,6 +1038,7 @@ void CDockAreaWidget::onDockWidgetFeaturesChanged()
 //============================================================================
 bool CDockAreaWidget::event(QEvent *e)
 {
+	qDebug()<<e;
     switch (e->type())
     {
     case QEvent::PlatformSurface: return true;

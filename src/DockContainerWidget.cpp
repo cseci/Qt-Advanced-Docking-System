@@ -258,7 +258,7 @@ public:
 		}
 
 		VisibleDockAreaCount = 0;
-		for (auto DockArea : DockAreas)
+		for (auto DockArea : qAsConst(DockAreas))
 		{
 			VisibleDockAreaCount += DockArea->isHidden() ? 0 : 1;
 		}
@@ -856,7 +856,8 @@ void DockContainerWidgetPrivate::saveChildNodesState(QXmlStreamWriter& s, QWidge
 			}
 
 			s.writeStartElement("Sizes");
-			for (auto Size : Splitter->sizes())
+			const auto SplitterSizes = Splitter->sizes();
+			for (auto Size : SplitterSizes)
 			{
 				s.writeCharacters(QString::number(Size) + " ");
 			}
@@ -1471,7 +1472,7 @@ emitAndExit:
 //============================================================================
 CDockAreaWidget* CDockContainerWidget::dockAreaAt(const QPoint& GlobalPos) const
 {
-	for (const auto& DockArea : d->DockAreas)
+	for (const auto& DockArea : qAsConst(d->DockAreas))
 	{
 		if (DockArea->isVisible() && DockArea->rect().contains(DockArea->mapFromGlobal(GlobalPos)))
 		{
@@ -1508,7 +1509,7 @@ int CDockContainerWidget::dockAreaCount() const
 int CDockContainerWidget::visibleDockAreaCount() const
 {
 	int Result = 0;
-	for (auto DockArea : d->DockAreas)
+	for (auto DockArea : qAsConst(d->DockAreas))
 	{
 		Result += DockArea->isHidden() ? 0 : 1;
 	}
@@ -1613,7 +1614,7 @@ void CDockContainerWidget::dropWidget(QWidget* Widget, DockWidgetArea DropArea, 
 QList<CDockAreaWidget*> CDockContainerWidget::openedDockAreas() const
 {
 	QList<CDockAreaWidget*> Result;
-	for (auto DockArea : d->DockAreas)
+	for (auto DockArea : qAsConst(d->DockAreas))
 	{
 		if (!DockArea->isHidden())
 		{
@@ -1628,7 +1629,7 @@ QList<CDockAreaWidget*> CDockContainerWidget::openedDockAreas() const
 //============================================================================
 bool CDockContainerWidget::hasOpenDockAreas() const
 {
-	for (auto DockArea : d->DockAreas)
+	for (auto DockArea : qAsConst(d->DockAreas))
 	{
 		if (!DockArea->isHidden())
 		{
@@ -1817,7 +1818,7 @@ CDockAreaWidget* CDockContainerWidget::topLevelDockArea() const
 QList<CDockWidget*> CDockContainerWidget::dockWidgets() const
 {
 	QList<CDockWidget*> Result;
-	for (const auto DockArea : d->DockAreas)
+	for (const auto DockArea : qAsConst(d->DockAreas))
 	{
 		Result.append(DockArea->dockWidgets());
 	}
@@ -1837,7 +1838,7 @@ void CDockContainerWidget::updateSplitterHandles(QSplitter* splitter)
 CDockWidget::DockWidgetFeatures CDockContainerWidget::features() const
 {
 	CDockWidget::DockWidgetFeatures Features(CDockWidget::AllDockWidgetFeatures);
-	for (const auto DockArea : d->DockAreas)
+	for (const auto DockArea : qAsConst(d->DockAreas))
 	{
 		Features &= DockArea->features();
 	}
@@ -1856,7 +1857,7 @@ CFloatingDockContainer* CDockContainerWidget::floatingWidget() const
 //============================================================================
 void CDockContainerWidget::closeOtherAreas(CDockAreaWidget* KeepOpenArea)
 {
-	for (const auto DockArea : d->DockAreas)
+	for (const auto DockArea : qAsConst(d->DockAreas))
 	{
 		if (DockArea == KeepOpenArea)
 		{

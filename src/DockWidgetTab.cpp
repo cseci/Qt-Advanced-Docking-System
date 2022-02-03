@@ -319,10 +319,10 @@ bool DockWidgetTabPrivate::startFloating(eDragState DraggingState)
 
     if (DraggingFloatingWidget == DraggingState)
     {
-        FloatingWidget->startFloating(DragStartMousePosition, Size, DraggingFloatingWidget, _this);
-    	auto Overlay = DockWidget->dockManager()->containerOverlay();
-    	Overlay->setAllowedAreas(OuterDockAreas);
-    	this->FloatingWidget = FloatingWidget;
+		this->FloatingWidget = FloatingWidget;
+		FloatingWidget->startFloating(DragStartMousePosition, Size, DraggingFloatingWidget, _this);
+		auto Overlay = DockWidget->dockManager()->containerOverlay();
+		Overlay->setAllowedAreas(OuterDockAreas);
     }
     else
     {

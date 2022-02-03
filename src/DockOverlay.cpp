@@ -35,6 +35,7 @@
 #include <QDebug>
 #include <QMap>
 #include <QWindow>
+#include <QPalette>
 
 #include "DockAreaWidget.h"
 #include "DockAreaTitleBar.h"
@@ -104,7 +105,9 @@ struct DockOverlayCrossPrivate
 		case CDockOverlayCross::OverlayColor:
 			 {
 				 QColor Color = pal.color(QPalette::Active, QPalette::Highlight);
+#ifdef ADS_TRANSPARENT_OVERLAY
 				 Color.setAlpha(64);
+#endif
 				 return Color;
 			 }
 			 break;
@@ -139,7 +142,7 @@ struct DockOverlayCrossPrivate
      */
     qreal dropIndicatiorWidth(QLabel* l) const
     {
-    #if defined(Q_OS_LINUX) && !defined(__ANDROID__)
+	#if defined(Q_OS_LINUX) && !defined(__ANDROID__)
         Q_UNUSED(l)
         return 40;
     #else
@@ -160,7 +163,14 @@ struct DockOverlayCrossPrivate
 
 		l->setPixmap(createHighDpiDropIndicatorPixmap(size, DockWidgetArea, Mode));
 		l->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);
+
+#ifdef ADS_TRANSPARENT_OVERLAY
 		l->setAttribute(Qt::WA_TranslucentBackground);
+#else
+		QPalette p;
+		p.setColor(QPalette::Background, QColor(0,0,0,0));
+		l->setPalette(p);
+#endif
 		l->setProperty("dockWidgetArea", DockWidgetArea);
 		return l;
 	}
@@ -200,11 +210,14 @@ struct DockOverlayCrossPrivate
 		baseRect.moveCenter(ShadowRect.center());
 
 		// Fill
+
 		QColor ShadowColor = iconColor(CDockOverlayCross::ShadowColor);
+#ifdef ADS_TRANSPARENT_OVERLAY
 		if (ShadowColor.alpha() == 255)
 		{
 			ShadowColor.setAlpha(64);
 		}
+#endif
 		p.fillRect(ShadowRect, ShadowColor);
 
 		// Drop area rect.
@@ -250,10 +263,12 @@ struct DockOverlayCrossPrivate
 			pen = p.pen();
 			pen.setColor(borderColor);
 			QColor Color = iconColor(CDockOverlayCross::OverlayColor);
+#ifdef ADS_TRANSPARENT_OVERLAY
 			if (Color.alpha() == 255)
 			{
 				Color.setAlpha(64);
 			}
+#endif
 			p.setBrush(Color);
 			p.setPen(Qt::NoPen);
 			p.drawRect(areaRect);
@@ -338,11 +353,17 @@ CDockOverlay::CDockOverlay(QWidget* parent, eMode Mode) :
 #else
 	setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);
 #endif
-	setWindowOpacity(1);
-	setWindowTitle("DockOverlay");
-	setAttribute(Qt::WA_NoSystemBackground);
-	setAttribute(Qt::WA_TranslucentBackground);
 
+	setWindowTitle("DockOverlay");
+	setWindowOpacity(1);
+	setAttribute(Qt::WA_NoSystemBackground);
+#ifdef ADS_TRANSPARENT_OVERLAY
+	setAttribute(Qt::WA_TranslucentBackground);
+#else
+	QPalette p;
+	p.setColor(QPalette::Background, QColor(0,0,0,0));
+	setPalette(p);
+#endif
 	d->Cross->setVisible(false);
 	setVisible(false);
 }
@@ -437,6 +458,9 @@ DockWidgetArea CDockOverlay::showOverlay(QWidget* target)
 	show();
 	d->Cross->updatePosition();
 	d->Cross->updateOverlayIcons();
+	raise();
+	d->Cross->raise();
+	d->Cross->show();
 	return dropAreaUnderCursor();
 }
 
@@ -470,12 +494,15 @@ bool CDockOverlay::dropPreviewEnabled() const
 void CDockOverlay::paintEvent(QPaintEvent* event)
 {
 	Q_UNUSED(event);
+
 	// Draw rect based on location
+//	d->Cross->update();
 	if (!d->DropPreviewEnabled)
 	{
 		d->DropAreaRect = QRect();
 		return;
 	}
+
 
 	QRect r = rect();
 	const DockWidgetArea da = dropAreaUnderCursor();
@@ -492,6 +519,7 @@ void CDockOverlay::paintEvent(QPaintEvent* event)
 	default: return;
 	}
 	QPainter painter(this);
+
     QColor Color = palette().color(QPalette::Active, QPalette::Highlight);
     QPen Pen = painter.pen();
     Pen.setColor(Color.darker(120));
@@ -500,8 +528,11 @@ void CDockOverlay::paintEvent(QPaintEvent* event)
     Pen.setCosmetic(true);
     painter.setPen(Pen);
     Color = Color.lighter(130);
-    Color.setAlpha(64);
-    painter.setBrush(Color);
+#ifdef ADS_TRANSPARENT_OVERLAY
+	Color.setAlpha(64);
+#endif
+
+	painter.setBrush(Color);
 	painter.drawRect(r.adjusted(0, 0, -1, -1));
 	d->DropAreaRect = r;
 }
@@ -600,7 +631,14 @@ CDockOverlayCross::CDockOverlayCross(CDockOverlay* overlay) :
 	setWindowFlags(Qt::Tool | Qt::FramelessWindowHint);
 #endif
 	setWindowTitle("DockOverlayCross");
+
+#ifdef ADS_TRANSPARENT_OVERLAY
 	setAttribute(Qt::WA_TranslucentBackground);
+#else
+	QPalette p;
+	p.setColor(QPalette::Background, QColor(0,0,0,0));
+	setPalette(p);
+#endif
 
 	d->GridLayout = new QGridLayout();
 	d->GridLayout->setSpacing(0);
@@ -633,6 +671,7 @@ void CDockOverlayCross::setupOverlayCross(CDockOverlay::eMode Mode)
 #endif
 	setAreaWidgets(areaWidgets);
 	d->UpdateRequired = false;
+	setAttribute(Qt::WA_AlwaysStackOnTop);
 }
 
 
@@ -644,7 +683,7 @@ void CDockOverlayCross::updateOverlayIcons()
 		return;
 	}
 
-	for (auto Widget : d->DropIndicatorWidgets)
+	for (auto Widget : qAsConst(d->DropIndicatorWidgets))
 	{
 		d->updateDropIndicatorIcon(Widget);
 	}
@@ -812,7 +851,7 @@ void CDockOverlayCross::setIconColors(const QString& Colors)
     auto SkipEmptyParts = Qt::SkipEmptyParts;
 #endif
     auto ColorList = Colors.split(' ', SkipEmptyParts);
-	for (const auto& ColorListEntry : ColorList)
+	for (const auto& ColorListEntry : qAsConst(ColorList))
 	{
         auto ComponentColor = ColorListEntry.split('=', SkipEmptyParts);
 		int Component = ColorCompenentStringMap.value(ComponentColor[0], -1);

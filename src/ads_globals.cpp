@@ -211,7 +211,7 @@ bool xcb_dump_props(WId window, const char *type)
 	xcb_get_prop_list(window, type, atoms, XCB_ATOM_ATOM);
 	qDebug() << "\n\n!!!" << type << "  -  " << atoms.length();
 	xcb_connection_t *connection = x11_connection();
-	for (auto atom : atoms)
+	for (auto atom : qAsConst(atoms))
 	{
 		auto foo = xcb_get_atom_name(connection, atom);
 		auto bar = xcb_get_atom_name_reply(connection, foo, nullptr);
@@ -399,7 +399,7 @@ void repolishStyle(QWidget* w, eRepolishChildOptions Options)
 
 	QList<QWidget*> Children = w->findChildren<QWidget*>(QString(),
 		(RepolishDirectChildren == Options) ? Qt::FindDirectChildrenOnly: Qt::FindChildrenRecursively);
-	for (auto Widget : Children)
+	for (auto Widget : qAsConst(Children))
 	{
 		Widget->style()->unpolish(Widget);
 		Widget->style()->polish(Widget);

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "DockManager.h"
+#include "ui_MainWindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -19,7 +20,7 @@ public:
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
+	Ui::MainWindow *ui;
     ads::CDockManager* m_DockManager;
 };
 
